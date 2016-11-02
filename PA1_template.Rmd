@@ -55,8 +55,10 @@ The total number of missing values is `r nanum`. After filling in the missing da
 nactivity$wkday <- weekdays(as.Date(nactivity$date), abbreviate = TRUE)
 wkd <- function(x) 
 {
-    x %in% c("Mon","Thu","Wed","Thu","Fri")
+    x %in% c("一","二","三","四","五")
 }
+#using Chinese operating system
+#"一","二","三","四","五" represents "Mon","Tue","Wed","Thu","Fri" respectively.
 wkdflag <- wkd(nactivity$wkday)
 nactivity$wkday[wkdflag == TRUE] <- "weekday"
 nactivity$wkday[wkdflag != TRUE] <- "weekend"

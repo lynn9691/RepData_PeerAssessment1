@@ -83,8 +83,10 @@ The total number of missing values is 2304. After filling in the missing data, t
 nactivity$wkday <- weekdays(as.Date(nactivity$date), abbreviate = TRUE)
 wkd <- function(x) 
 {
-    x %in% c("Mon","Thu","Wed","Thu","Fri")
+    x %in% c("一","二","三","四","五")
 }
+#using Chinese operating system
+#"一","二","三","四","五" represents "Mon","Tue","Wed","Thu","Fri" respectively.
 wkdflag <- wkd(nactivity$wkday)
 nactivity$wkday[wkdflag == TRUE] <- "weekday"
 nactivity$wkday[wkdflag != TRUE] <- "weekend"
@@ -96,29 +98,6 @@ par(mfcol = c(2,1))
 wdactave <- tapply(wdact$steps,wdact$interval,mean)
 weactave <- tapply(weact$steps,weact$interval,mean)
 plot(names(wdactave),wdactave, type = "l", xlab = "Interval", ylab = "average number of steps", main = "weekday")
-```
-
-```
-## Warning in min(x): min里所有的参数都不存在; 回覆Inf
-```
-
-```
-## Warning in max(x): max里所有的参数都不存在；回覆-Inf
-```
-
-```
-## Warning in min(x): min里所有的参数都不存在; 回覆Inf
-```
-
-```
-## Warning in max(x): max里所有的参数都不存在；回覆-Inf
-```
-
-```
-## Error in plot.window(...): 'xlim'值不能是无限的
-```
-
-```r
 plot(names(weactave),weactave, type = "l", xlab = "Interval", ylab = "average number of steps", main = "weekend")
 ```
 
