@@ -1,0 +1,72 @@
+#My assignment
+
+
+
+###Reading in data
+```{r readdata}
+activity <- read.csv("activity.csv")
+head(activity)
+```
+
+###Total steps per day
+```{r totalsteps}
+sumnarm <- function(x) {sum(x,na.rm = TRUE)}
+tstep <- tapply(activity$steps,as.factor(activity$date),sumnarm)
+hist(tstep, xlab = "Total steps per day", main = "Total steps per day")
+
+meantstep <- mean(tstep)
+mediantstep <- median(tstep)
+```
+The mean of the total number of steps taken per day is `r meantstep`, and the median is `r mediantstep`.  
+
+###Average daily activity pattern
+```{r dailypattern}
+meannarm <- function(x) {mean(x,na.rm = TRUE)}
+mstep <- tapply(activity$steps,as.factor(activity$interval),meannarm)
+plot(names(mstep),mstep,type = "l",xlab = "time", 
+     ylab = "average number of steps", main = "Average number of steps")
+maxitv <- which.max(mstep)
+```
+The 5-minute interval from `r names(maxitv)` contains the maximum number of steps (`r maxitv`).
+
+###Missing values
+```{r nas}
+#computing total number of NAs.
+nanum <- sum(is.na(activity$steps))
+
+#replacing NAs by the mean of the 5-minute interval.
+napos <- is.na(activity$steps)
+nactivity <- activity
+nactivity$steps[napos==TRUE] <- mstep[as.character(activity$interval[napos==TRUE])]
+
+#calculating total number of steps each day
+ntstep <- tapply(nactivity$steps,nactivity$date,sum)
+
+#making a histogram
+hist(ntstep, xlab = "total number of steps", main = "Total number of steps")
+
+meanntstep <- mean(ntstep)
+medianntstep <- median(ntstep)
+```
+The total number of missing values is `r nanum`. After filling in the missing data, the mean of total number of steps per day is `r meanntstep`, and the median is `r medianntstep`. Both numbers have become larger than that before filling in the missing data.
+
+###Activity patterns on weekdays and weekends
+```{r weekday}
+nactivity$wkday <- weekdays(as.Date(nactivity$date), abbreviate = TRUE)
+wkd <- function(x) 
+{
+    x %in% c("Mon","Thu","Wed","Thu","Fri")
+}
+wkdflag <- wkd(nactivity$wkday)
+nactivity$wkday[wkdflag == TRUE] <- "weekday"
+nactivity$wkday[wkdflag != TRUE] <- "weekend"
+
+#making panel plot
+wdact <- subset(nactivity, wkday == "weekday")
+weact <- subset(nactivity, wkday == "weekend")
+par(mfcol = c(2,1))
+wdactave <- tapply(wdact$steps,wdact$interval,mean)
+weactave <- tapply(weact$steps,weact$interval,mean)
+plot(names(wdactave),wdactave, type = "l", xlab = "Interval", ylab = "average number of steps", main = "weekday")
+plot(names(weactave),weactave, type = "l", xlab = "Interval", ylab = "average number of steps", main = "weekend")
+```
